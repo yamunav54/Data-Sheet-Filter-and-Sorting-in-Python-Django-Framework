@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>CSV loader</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    {% load static %}
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+      .fakeimg {
+        height: 200px;
+        background: #aaa;
+      }
+      .uploaddiv {
+        position: relative;
+        overflow: hidden;
+      }
+      .uploadbtn {
+        position: absolute;
+        font-size: 20px;
+        opacity: 0;
+        right: 0;
+        top: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="p-4 bg-primary text-white text-center">
+      <h1>CSV loader</h1>
+    </div>
+    <div class="container-fluid mt-5">
+      <div class="row">
+        <div class="col-sm-10">
+          <ul class="nav nav-tabs" id="test">
+               {% if worksheets %}
+                   {% for sheet in worksheets %}
+                       {% if sheet == cursheetname %}
+                            <li class="nav-item">
+                              <a class="nav-link active" data-toggle="tab" href="#home"
+                                >{{ sheet }}</a
+                              >
+                            </li>
+                       {% else %}
+                           <li class="nav-item">
+                              <a class="nav-link" data-toggle="tab" href="#home"
+                                >{{ sheet }}</a
+                              >
+                            </li>
+                       {% endif %}
+                   {% endfor %}
+               {% else %}
+                   <h2</h2>
+               {% endif %}
+          </ul>
+          <div class="m-1 mt-5">
+              <div class="table-responsive" style="height:500px">
+                <table class="table table-bordered">
+                    {% if columns %}
+                      <thead class="thead-dark">
+                        <tr>
+                          {% for column in columns %}
+                              <th>{{ column }}</th>
+                          {% endfor %}
+                            <th></th>
+                        </tr>
+                      </thead>
+                    {% endif %}
+                  <tbody>
+                    {% for row in rows %}
+                        <tr>
+                            {% for cell in row %}
+                                <td>{{ cell }}</td>
+                            {% endfor %}
+                            <td><a href="edit/{{ forloop.counter0 }}">edit</a></td>
+                        </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+          </div>
+        </div>
+        <div class="col-sm-2 mt-5">
+           <div class="card">
+              <div class="card-body">
+                <h4 class="card-title">Excel files</h4>
+                <div class="list-group">
+                    {% for file in files %}
+                        <button id = "{{ forloop.counter0 }}"  class="list-group-item list-group-item-action">{{ file }}</button>
+                    {% endfor %}
+                </div>
+              </div>
+            </div>
+            <br>
+            <input type="text" id="sorname" name="sorname" value="Flight Number">
+            {% for file in files %}
+            <a href="sorting/{{ file }}:Flight Number" class="btn btn-sm btn-primary btn-block mt-2" id="sort">Sort</a>
+            {% endfor %}
+            <br>
+            <br>
+            <br>
+            <input type="text" id="lname" name="lname">
+            {% for file in files %}
+            <a href="filtering/{{ file }}:" class="btn btn-sm btn-primary btn-block mt-2" id="fil">Filter</a>
+            {% endfor %}
+        </div>
+      </div>
+    </div>
+    <hr>
+
+    <!-- <div class="pt-3 pb-1 bg-dark text-white text-center">
+      <p>Footer</p>
+    </div> -->
+    <script>
+        // Add the following code if you want the name of the file appear on select
+        $(".custom-file-input").on("change", function() {
+          var fileName = $(this).val().split("\\").pop();
+          $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+        });
+
+        {% for file in files %}
+        $("#sorname").on("keydown", function(){
+          $("#sort").attr("href","sorting/{{file}}:"+ $("#sorname").val());
+        });
+        {% endfor %}
+
+
+        {% for file in files %}
+        $("#lname").on("keydown", function(){
+          $("#fil").attr("href","filtering/{{file}}:"+ $("#lname").val());
+        });
+        {% endfor %}
+  
+        {% for file in files %}
+            $("#{{ forloop.counter0 }}").click(function (){
+              location.href = "selectFile/{{ file }}"
+            })
+        {% endfor %}
+        
+    </script>
+  </body>
+</html>
